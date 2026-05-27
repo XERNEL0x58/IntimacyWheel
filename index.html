@@ -503,7 +503,7 @@
     }
     function triggerDl(){
       dlCount++; localStorage.setItem('almaktab_downloads',dlCount);
-      const l=document.createElement('a'); l.href=downloadUrl; l.download='almaktab.apk';
+      const l=document.createElement('a'); l.href=downloadUrl; l.download='Intimacy.2.0.apk';
       document.body.appendChild(l); l.click(); document.body.removeChild(l);
       showToast(window.toastDownloadSuccessMsg);
       setTimeout(()=>{isDownloading=false;dlBtn.disabled=false;dlText.innerHTML=`<i class="fab fa-android text-xl"></i> ${DEFAULT_CONFIG.downloadButtonText}`;progWrap.style.display='none';progFill.style.width='0%';},1500);
