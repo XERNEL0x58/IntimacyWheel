@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- تطبيق الثيم فوراً لتجنب الوميض -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('siteTheme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    @font-face { font-family:'Elektra'; src:url('Fonts/elektra.ttf') format('truetype'); font-display:swap; }
+    @font-face { font-family:'Techno';  src:url('Fonts/techno.ttf')  format('truetype'); font-display:swap; }
+
+    /* ── وضع نهاري ── */
+    :root, html[data-theme="light"] {
+      --bg-page:   #F9FAFE;
+      --bg-card:   rgba(255,255,255,0.98);
+      --bg-social: #FFFFFF;
+      --tx-main:   #1F2A48;
+      --tx-sub:    #2C3E5C;
+      --tx-muted:  #5A6E8A;
+      --tx-light:  #9CA3AF;
+      --bd-card:   rgba(0,0,0,0.05);
+      --bd-social: #E9EDF2;
+      --bd-footer: #E2E8F0;
+      --sh-card:   0 20px 35px -12px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.02);
+      --toggle-bg: rgba(255,255,255,0.25);
+      --toggle-hov:rgba(255,255,255,0.4);
+      --btn-sec-bg:#F3F4F6;
+      --btn-sec-tx:#374151;
+    }
+    /* ── وضع ليلي ── */
+    html[data-theme="dark"] {
+      --bg-page:   #0D1117;
+      --bg-card:   #161B27;
+      --bg-social: #1E2535;
+      --tx-main:   #E2E8F4;
+      --tx-sub:    #94A3B8;
+      --tx-muted:  #64748B;
+      --tx-light:  #64748B;
+      --bd-card:   rgba(255,255,255,0.07);
+      --bd-social: rgba(255,255,255,0.08);
+      --bd-footer: rgba(255,255,255,0.08);
+      --sh-card:   0 20px 35px -12px rgba(0,0,0,0.5),0 1px 2px rgba(0,0,0,0.3);
+      --toggle-bg: rgba(0,0,0,0.3);
+      --toggle-hov:rgba(0,0,0,0.45);
+      --btn-sec-bg:#1E2535;
+      --btn-sec-tx:#94A3B8;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{overflow-x:hidden;}
+    body{
+      background:var(--bg-page);
+      font-family:'Cairo',sans-serif;
+      color:var(--tx-main);
+      display:flex;flex-direction:column;
+      min-height:100vh;overflow-x:hidden;
+      transition:background .35s,color .35s;
+    }
+
+    /* كارد */
+    .premium-card{
+      background:var(--bg-card);
+      border-radius:clamp(1rem,4vw,2rem);
+      box-shadow:var(--sh-card);
+      border:1px solid var(--bd-card);
+      width:100%;
+      transition:background .35s,border-color .35s,box-shadow .35s;
+    }
+
+    /* شريط العلامة */
+    .store-gradient-bg{background:var(--accent-color,#D63384);}
+    .brand-bar-name{
+      font-family:'Elektra','Cairo',sans-serif;font-weight:bold;
+      font-size:clamp(1rem,4vw,1.875rem);letter-spacing:.05em;
+      word-break:break-word;text-align:center;
+    }
+
+    /* زر الثيم */
+    .theme-btn{
+      position:absolute;left:14px;top:50%;transform:translateY(-50%);
+      background:var(--toggle-bg);border:none;border-radius:50px;
+      width:clamp(34px,8vw,42px);height:clamp(34px,8vw,42px);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;font-size:clamp(.95rem,2.5vw,1.15rem);
+      color:white;transition:background .2s,transform .3s;flex-shrink:0;
+    }
+    .theme-btn:hover{background:var(--toggle-hov);transform:translateY(-50%) scale(1.1);}
+
+    /* أزرار الصفحة */
+    .action-btn{
+      background:var(--accent-color,#D63384);
+      color:white;font-weight:700;border:none;
+      border-radius:9999px;
+      padding:.45rem .9rem;
+      font-size:clamp(.78rem,2.5vw,.9rem);
+      display:inline-flex;align-items:center;gap:.4rem;
+      cursor:pointer;white-space:nowrap;
+      transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.1);
+    }
+    .action-btn:hover{background:var(--accent-color-dark,#c0266e);transform:scale(1.01);}
+
+    /* صف الأزرار */
+    .buttons-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:.5rem;flex-wrap:wrap;}
+    body[dir="rtl"] .buttons-row{flex-direction:row;}
+    body[dir="ltr"] .buttons-row{flex-direction:row-reverse;}
+    body[dir="ltr"] .back-btn i{transform:rotate(180deg);}
+
+    /* التواصل الاجتماعي */
+    .social-wrap{
+      background:var(--bg-social);border-radius:60px;
+      padding:.6rem 1rem;display:inline-flex;gap:1rem;
+      box-shadow:0 6px 14px rgba(0,0,0,.06);
+      border:1px solid var(--bd-social);
+      flex-wrap:wrap;justify-content:center;max-width:100%;
+      transition:background .35s,border-color .35s;
+    }
+    .social-item{transition:all .2s;opacity:.75;display:inline-flex;align-items:center;justify-content:center;}
+    .social-item img{width:clamp(28px,7vw,36px);height:clamp(28px,7vw,36px);transition:.2s;}
+    .social-item:hover{opacity:1;transform:translateY(-3px);}
+    .social-item i{color:var(--tx-sub)!important;}
+
+    /* فوتر */
+    .footer-pro{
+      background:transparent;border-top:1px solid var(--bd-footer);
+      color:var(--tx-muted);text-align:center;
+      padding:1.2rem 1rem;font-size:clamp(.7rem,2vw,.8rem);
+      margin-top:auto;transition:border-color .35s,color .35s;
+    }
+
+    /* محتوى السياسة */
+    .arabic{direction:rtl;text-align:right;}
+    .hidden{display:none;}
+    .policy-content h1{
+      font-weight:800;margin-bottom:1rem;
+      font-size:clamp(1.3rem,4.5vw,1.875rem);
+      color:var(--accent-color,#D63384);
+    }
+    .policy-content h2{
+      font-weight:700;margin-top:1.5rem;margin-bottom:.6rem;
+      font-size:clamp(1rem,3.5vw,1.25rem);color:var(--tx-main);
+      transition:color .35s;
+    }
+    .policy-content h3{
+      font-weight:700;margin-top:1.2rem;margin-bottom:.5rem;
+      font-size:clamp(.9rem,3vw,1.1rem);color:var(--tx-sub);
+      transition:color .35s;
+    }
+    .policy-content p,.policy-content ul{
+      margin-bottom:1rem;line-height:1.75;
+      font-size:clamp(.83rem,2.5vw,.95rem);
+      color:var(--tx-sub);transition:color .35s;
+    }
+    .policy-content ul{padding-right:1.5rem;list-style-type:disc;}
+    body[dir="ltr"] .policy-content ul{padding-right:0;padding-left:1.5rem;}
+    .policy-content a{color:var(--accent-color,#D63384);text-decoration:none;}
+    .policy-content a:hover{text-decoration:underline;}
+    .policy-content strong{color:var(--tx-main);transition:color .35s;}
+
+    /* حاوية */
+    .main-container{
+      width:100%;max-width:48rem;margin:0 auto;
+      padding:clamp(1rem,4vw,2rem) clamp(.75rem,4vw,1.5rem);
+    }
+    .card-pad{padding:clamp(1rem,4vw,2rem);}
+  </style>
+</head>
+<body>
+
+  <div class="store-gradient-bg text-white text-center py-3 shadow-sm relative">
+    <div class="flex items-center justify-center px-4 relative" style="min-height:52px;">
+      <span id="brandName" class="brand-bar-name">XERNEL0x58</span>
+      <button id="themeBtn" class="theme-btn" aria-label="تبديل الوضع">
+        <i id="themeIcon" class="fas fa-moon"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="premium-card card-pad">
+
+      <div class="buttons-row">
+        <button onclick="window.location.href='index.html'" class="action-btn back-btn">
+          <i class="fas fa-arrow-right"></i> <span id="backBtnText">الرجوع</span>
+        </button>
+        <button id="lang-toggle-btn" class="action-btn">
+          <i class="fas fa-language"></i> <span id="langBtnText">English</span>
+        </button>
+      </div>
+
+      <!-- English -->
+      <div id="english-content" class="policy-content hidden">
+        <h1>Privacy Policy</h1>
+        <p>This privacy policy governs your use of the software application ("IntimacyWheel") for mobile devices that was created by <strong id="enBrandName">XERNEL0x58</strong>.</p>
+        <h2>What information does the Application obtain and how is it used?</h2>
+        <h3>User Provided Information</h3>
+        <p>The Application itself does not collect any information related to the user who installs it. However, third-party services integrated within the Application may collect certain information automatically for analytics or advertising purposes.</p>
+        <h3>Automatically Collected Information</h3>
+        <p>The Application may collect certain information automatically only for third parties and advertisers, including but not limited to:</p>
+        <ul>
+          <li>The type of mobile device you use</li>
+          <li>Your mobile device's unique device ID</li>
+          <li>Your mobile device's IP address</li>
+          <li>Your mobile operating system</li>
+          <li>Information about your use of the Application</li>
+          <li>Other applications installed on the device</li>
+        </ul>
+        <h2>Does the Application collect precise real-time location information of the device?</h2>
+        <p>No, this Application does not collect precise information about the location of your mobile device.</p>
+        <h2>Do third parties see and/or have access to information obtained by the Application?</h2>
+        <p>Yes. We will share your information with third parties only in the ways that are described in this privacy statement. Information may be disclosed:</p>
+        <ul>
+          <li>As required by law (e.g., subpoena or similar legal process)</li>
+          <li>To protect our rights, your safety, or the safety of others, investigate fraud, or respond to a government request</li>
+          <li>With our trusted service providers who work on our behalf and agree to adhere to this privacy policy</li>
+          <li>If <strong id="enBrandName2">XERNEL0x58</strong> is involved in a merger, acquisition, or asset sale</li>
+          <li>To advertisers, ad networks, and analytics providers (see below)</li>
+        </ul>
+        <h2>Automatic Data Collection and Advertising</h2>
+        <p>We may use analytics companies to better understand how the Application is used. Advertisers and ad networks may access anonymized data such as:</p>
+        <ul>
+          <li>Mobile device ID</li>
+          <li>Mobile phone number</li>
+          <li>Installed apps</li>
+          <li>Visited mobile websites</li>
+          <li>Non-precise location (e.g., zip code)</li>
+        </ul>
+        <p>We use encryption to help anonymize this information. We may also share encrypted versions of data to assist with analytics or advertising targeting.</p>
+        <h2>Opt-out Options</h2>
+        <p>You can stop all information collection by uninstalling the Application. Use the standard uninstall process available on your mobile device or via the app store.</p>
+        <h2>Security</h2>
+        <p>We value your data's confidentiality. We implement physical, electronic, and procedural safeguards to protect your data. However, no system is 100% secure.</p>
+        <h2>Changes to this Policy</h2>
+        <p>This policy may be updated occasionally. We will notify you of any significant changes by posting the updated policy here. Continued use of the Application indicates acceptance of any changes.</p>
+        <h2>Your Consent</h2>
+        <p>By using the Application, you consent to our processing of your information as outlined in this policy. "Processing" means collecting, storing, using, combining, and sharing information as needed.</p>
+        <h2>Contact Us</h2>
+        <p>You can contact us through the following social media channels:</p>
+        <div class="flex justify-center mt-4 mb-2"><div id="socialLinksContainer" class="social-wrap"></div></div>
+      </div>
+
+      <!-- Arabic -->
+      <div id="arabic-content" class="policy-content arabic">
+        <h1>سياسة الخصوصية</h1>
+        <p>تحكم سياسة الخصوصية هذه استخدامك لتطبيق الهاتف المحمول ("مدار السعادة - Intimacy") الذي تم إنشاؤه بواسطة <strong id="arBrandName">XERNEL0x58</strong>.</p>
+        <h2>ما المعلومات التي يجمعها التطبيق وكيف يتم استخدامها؟</h2>
+        <h3>المعلومات التي يقدمها المستخدم</h3>
+        <p>التطبيق نفسه لا يجمع أية معلومات تتعلق بالمستخدم الذي يثبت التطبيق. ومع ذلك، قد تقوم خدمات الطرف الثالث المدمجة داخل التطبيق بجمع بعض المعلومات تلقائيًا لأغراض التحليلات أو الإعلانات.</p>
+        <h3>المعلومات التي يتم جمعها تلقائيًا</h3>
+        <p>قد يقوم التطبيق بجمع بعض المعلومات تلقائيًا فقط لأطراف ثالثة والمعلنين، بما في ذلك على سبيل المثال لا الحصر:</p>
+        <ul>
+          <li>نوع جهاز الهاتف المحمول الذي تستخدمه</li>
+          <li>معرّف الجهاز الفريد الخاص بجهازك المحمول</li>
+          <li>عنوان IP الخاص بجهازك المحمول</li>
+          <li>نظام التشغيل الخاص بجهازك المحمول</li>
+          <li>معلومات عن استخدامك للتطبيق</li>
+          <li>تطبيقات أخرى مثبتة على الجهاز</li>
+        </ul>
+        <h2>هل يجمع التطبيق معلومات دقيقة عن الموقع اللحظي للجهاز؟</h2>
+        <p>لا، هذا التطبيق لا يجمع معلومات دقيقة عن موقع جهازك المحمول.</p>
+        <h2>هل يرى الطرف الثالث و/أو يمكنه الوصول إلى المعلومات التي يجمعها التطبيق؟</h2>
+        <p>نعم. سنشارك معلوماتك مع الأطراف الثالثة فقط بالطرق الموضحة في بيان الخصوصية هذا. قد يتم الكشف عن المعلومات في الحالات التالية:</p>
+        <ul>
+          <li>حسب ما يقتضيه القانون (مثل أمر استدعاء أو إجراءات قانونية مماثلة)</li>
+          <li>لحماية حقوقنا، وسلامتك، وسلامة الآخرين، للتحقيق في الاحتيال، أو للرد على طلبات الحكومة</li>
+          <li>مع مزودي الخدمات الموثوقين الذين يعملون نيابة عنا ويوافقون على الالتزام بسياسة الخصوصية هذه</li>
+          <li>إذا كانت <strong id="arBrandName2">XERNEL0x58</strong> متورطة في اندماج، أو استحواذ، أو بيع أصول</li>
+          <li>للمعلنين، وشبكات الإعلانات، ومزودي التحليلات (انظر أدناه)</li>
+        </ul>
+        <h2>جمع البيانات التلقائي والإعلانات</h2>
+        <p>قد نستخدم شركات تحليلات لفهم كيفية استخدام التطبيق بشكل أفضل. قد تصل المعلنين وشبكات الإعلانات إلى بيانات مجهولة المصدر مثل:</p>
+        <ul>
+          <li>معرّف جهاز الهاتف المحمول</li>
+          <li>رقم هاتف المحمول</li>
+          <li>التطبيقات المثبتة</li>
+          <li>المواقع الإلكترونية التي تمت زيارتها على الهاتف المحمول</li>
+          <li>الموقع غير الدقيق (مثل الرمز البريدي)</li>
+        </ul>
+        <p>نستخدم التشفير للمساعدة في إخفاء هوية هذه المعلومات. قد نشارك أيضًا نسخًا مشفرة من البيانات للمساعدة في التحليلات أو استهداف الإعلانات.</p>
+        <h2>خيارات الانسحاب</h2>
+        <p>يمكنك إيقاف جمع جميع المعلومات عن طريق إلغاء تثبيت التطبيق. استخدم عملية إلغاء التثبيت القياسية المتوفرة على جهازك المحمول أو عبر متجر التطبيقات.</p>
+        <h2>الأمان</h2>
+        <p>نحن نُقدّر سرية بياناتك. ننفذ تدابير وقائية مادية وإلكترونية وإجرائية لحماية بياناتك. ومع ذلك، لا يوجد نظام آمن 100%.</p>
+        <h2>التغييرات على هذه السياسة</h2>
+        <p>قد يتم تحديث هذه السياسة من وقت لآخر. سنُبلغك بأي تغييرات مهمة عن طريق نشر السياسة المُحدثة هنا. يشير استمرار استخدام التطبيق إلى قبولك لأي تغييرات.</p>
+        <h2>موافقتك</h2>
+        <p>باستخدام التطبيق، فإنك توافق على معالجة معلوماتك كما هو موضح في هذه السياسة. تعني "المعالجة" جمع البيانات، تخزينها، استخدامها، دمجها، ومشاركتها حسب الحاجة.</p>
+        <h2>اتصل بنا</h2>
+        <p>يمكنك التواصل معنا عبر قنوات السوشيال ميديا التالية:</p>
+        <div class="flex justify-center mt-4 mb-2"><div id="socialLinksContainerAr" class="social-wrap"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer-pro">
+    <div class="max-w-md mx-auto px-4">
+      <i class="fas fa-crown text-amber-400"></i>
+      <span id="footerCopyright" class="font-semibold">All Rights Reserved - @XERNEL0x58</span>
+    </div>
+  </footer>
+
+  <script>
+    document.documentElement.style.setProperty('--accent-color','#D63384');
+    document.documentElement.style.setProperty('--accent-color-dark','#c0266e');
+
+    /* ── ثيم ── */
+    function syncIcon(){
+      const dark = document.documentElement.getAttribute('data-theme')==='dark';
+      document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    syncIcon();
+    document.getElementById('themeBtn').addEventListener('click',()=>{
+      const next = document.documentElement.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('siteTheme', next);
+      syncIcon();
+    });
+
+    /* ── تحميل إعدادات ── */
+    async function loadConfig(){
+      try{
+        const res=await fetch('app-config.json');
+        if(!res.ok) throw new Error();
+        const cfg=await res.json();
+        if(cfg.accentColor) document.documentElement.style.setProperty('--accent-color',cfg.accentColor);
+        const brand=cfg.brandName||'XERNEL0x58';
+        const appName=cfg.privacyAppName||cfg.appName||'التطبيق';
+        document.getElementById('brandName').innerText=brand;
+        document.getElementById('footerCopyright').innerText=cfg.copyright||'All Rights Reserved - @XERNEL0x58';
+        document.title=`سياسة الخصوصية | ${appName}`;
+        document.querySelectorAll('#enBrandName,#enBrandName2').forEach(el=>el.innerText=brand);
+        document.querySelectorAll('#arBrandName,#arBrandName2').forEach(el=>el.innerText=brand);
+        buildSocialLinks(cfg.socialMedia,'socialLinksContainer');
+        buildSocialLinks(cfg.socialMedia,'socialLinksContainerAr');
+      }catch{
+        buildSocialLinks(null,'socialLinksContainer');
+        buildSocialLinks(null,'socialLinksContainerAr');
+      }
+    }
+
+    function buildSocialLinks(items,cid){
+      const c=document.getElementById(cid);
+      if(!c)return; c.innerHTML='';
+      const def={facebook:"https://facebook.com/",twitter:"https://twitter.com/",instagram:"https://instagram.com/",telegram:"https://telegram.org/",github:"https://github.com/"};
+      let obj=(items&&typeof items==='object')?{...items}:{...def};
+      const map={facebook:{file:'facebook.png',alt:'Facebook',ic:'fab fa-facebook'},twitter:{file:'twitter.png',alt:'Twitter',ic:'fab fa-twitter'},instagram:{file:'instagram.png',alt:'Instagram',ic:'fab fa-instagram'},telegram:{file:'telegram.png',alt:'Telegram',ic:'fab fa-telegram'},github:{file:'github.png',alt:'GitHub',ic:'fab fa-github'}};
+      for(const[k,u] of Object.entries(obj)){
+        if(k==='privacyPolicyLink') continue;
+        if(!u||u==='#') continue;
+        const info=map[k]; if(!info) continue;
+        const a=document.createElement('a');
+        a.href=u; a.target='_blank'; a.className='social-item';
+        a.setAttribute('aria-label',info.alt);
+        const img=document.createElement('img');
+        img.src=`SocialMedia/${info.file}`; img.alt=info.alt; img.loading='lazy';
+        img.onerror=function(){this.onerror=null;const f=document.createElement('i');f.className=`${info.ic} text-3xl`;f.style.color='var(--tx-sub)';this.parentNode.replaceChild(f,this);};
+        a.appendChild(img); c.appendChild(a);
+      }
+      if(c.children.length===0){const p=document.createElement('div');p.style.color='var(--tx-light)';p.style.fontSize='.875rem';p.innerText='لا توجد روابط تواصل اجتماعي حالياً';c.appendChild(p);}
+    }
+
+    /* ── اللغة ── */
+    const enDiv=document.getElementById('english-content');
+    const arDiv=document.getElementById('arabic-content');
+    const langBtn=document.getElementById('lang-toggle-btn');
+
+    function setLanguage(lang){
+      if(lang==='ar'){
+        enDiv.classList.add('hidden'); arDiv.classList.remove('hidden');
+        document.body.dir='rtl'; document.documentElement.lang='ar';
+        document.getElementById('langBtnText').innerText='English';
+        document.getElementById('backBtnText').innerText='الرجوع';
+        localStorage.setItem('privacyLang','ar');
+      } else {
+        enDiv.classList.remove('hidden'); arDiv.classList.add('hidden');
+        document.body.dir='ltr'; document.documentElement.lang='en';
+        document.getElementById('langBtnText').innerText='العربية';
+        document.getElementById('backBtnText').innerText='Back';
+        localStorage.setItem('privacyLang','en');
+      }
+    }
+    langBtn.addEventListener('click',()=>setLanguage(arDiv.classList.contains('hidden')?'ar':'en'));
+    setLanguage(localStorage.getItem('privacyLang')||'ar');
+    loadConfig();
+  </script>
+</body>
+</html>

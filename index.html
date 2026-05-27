@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>مدار السعادة - Intimacy</title>
+  <meta name="description" content="IntimacyWheel">
+
+  <!-- تطبيق الثيم فوراً لتجنب الوميض -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('siteTheme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    @font-face { font-family:'Elektra'; src:url('Fonts/elektra.ttf') format('truetype'); font-display:swap; }
+    @font-face { font-family:'Techno';  src:url('Fonts/techno.ttf')  format('truetype'); font-display:swap; }
+
+    /* ── وضع نهاري ── */
+    :root, html[data-theme="light"] {
+      --bg-page:      #F9FAFE;
+      --bg-card:      rgba(255,255,255,0.98);
+      --bg-dl:        #F9FAFB;
+      --bg-social:    #FFFFFF;
+      --bg-tag:       #F3F4F6;
+      --tx-main:      #1F2A48;
+      --tx-sub:       #2C3E5C;
+      --tx-muted:     #5A6E8A;
+      --tx-light:     #9CA3AF;
+      --bd-card:      rgba(0,0,0,0.05);
+      --bd-social:    #E9EDF2;
+      --bd-footer:    #E2E8F0;
+      --sh-card:      0 20px 35px -12px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.02);
+      --sh-icon:      0 12px 18px -8px rgba(0,0,0,0.2);
+      --toggle-bg:    rgba(255,255,255,0.25);
+      --toggle-hov:   rgba(255,255,255,0.4);
+    }
+    /* ── وضع ليلي ── */
+    html[data-theme="dark"] {
+      --bg-page:      #0D1117;
+      --bg-card:      #161B27;
+      --bg-dl:        #0F1520;
+      --bg-social:    #1E2535;
+      --bg-tag:       #1E2535;
+      --tx-main:      #E2E8F4;
+      --tx-sub:       #94A3B8;
+      --tx-muted:     #64748B;
+      --tx-light:     #64748B;
+      --bd-card:      rgba(255,255,255,0.07);
+      --bd-social:    rgba(255,255,255,0.08);
+      --bd-footer:    rgba(255,255,255,0.08);
+      --sh-card:      0 20px 35px -12px rgba(0,0,0,0.5),0 1px 2px rgba(0,0,0,0.3);
+      --sh-icon:      0 12px 18px -8px rgba(0,0,0,0.5);
+      --toggle-bg:    rgba(0,0,0,0.3);
+      --toggle-hov:   rgba(0,0,0,0.45);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{overflow-x:hidden;}
+    body{
+      background:var(--bg-page);
+      font-family:'Cairo',sans-serif;
+      color:var(--tx-main);
+      overflow-x:hidden;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      transition:background .35s,color .35s;
+    }
+
+    /* كارد */
+    .premium-card{
+      background:var(--bg-card);
+      border-radius:1.5rem;
+      box-shadow:var(--sh-card);
+      border:1px solid var(--bd-card);
+      width:100%;
+      transition:background .35s,border-color .35s,box-shadow .35s;
+    }
+
+    /* شريط العلامة التجارية */
+    .store-gradient-bg{background:var(--accent-color,#D63384);}
+    .brand-bar-name{
+      font-family:'Elektra','Cairo',sans-serif;
+      font-weight:bold;
+      font-size:clamp(1rem,4vw,1.875rem);
+      letter-spacing:.05em;
+      word-break:break-word;
+      text-align:center;
+    }
+
+    /* زر الثيم */
+    .theme-btn{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      background:var(--toggle-bg);
+      border:none;
+      border-radius:50px;
+      width:clamp(34px,8vw,42px);
+      height:clamp(34px,8vw,42px);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      font-size:clamp(.95rem,2.5vw,1.15rem);
+      color:white;
+      transition:background .2s,transform .3s;
+      flex-shrink:0;
+    }
+    .theme-btn:hover{background:var(--toggle-hov);transform:translateY(-50%) scale(1.1);}
+
+    /* زر التحميل */
+    .btn-dl{
+      background:var(--accent-color,#D63384);
+      transition:all .2s;
+      font-size:clamp(.88rem,3vw,1rem);
+    }
+    .btn-dl:hover:not(:disabled){background:var(--accent-color-dark,#c0266e);transform:scale(1.01);box-shadow:0 8px 20px rgba(0,0,0,.3);}
+    .btn-dl:disabled{opacity:.7;cursor:wait;}
+
+    /* منطقة التحميل */
+    .dl-area{background:var(--bg-dl);border-radius:.75rem;padding:6px;transition:background .35s;}
+
+    /* صور الشاشة */
+    .screenshot-store{
+      object-fit:cover;
+      width:clamp(110px,28vw,160px);
+      height:clamp(220px,56vw,300px);
+      border-radius:1.25rem;
+      box-shadow:0 15px 30px -12px rgba(0,0,0,.3);
+      border:1px solid var(--bd-card);
+      cursor:pointer;
+      flex-shrink:0;
+      transition:all .2s;
+    }
+    .screenshot-store:hover{transform:scale(1.02);}
+    .scrollbar-hide::-webkit-scrollbar{display:none;}
+    .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
+
+    /* وصف */
+    .desc-text{
+      color:var(--tx-sub);
+      line-height:1.75;
+      font-size:clamp(.85rem,2.5vw,.95rem);
+      transition:color .35s;
+    }
+    .desc-text.collapsed{
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+    .toggle-btn{
+      color:var(--accent-color,#D63384);
+      font-weight:700;
+      cursor:pointer;
+      font-size:.85rem;
+      margin-top:6px;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+
+    /* عناوين الأقسام */
+    .sec-title{font-weight:700;color:var(--tx-main);transition:color .35s;}
+    .sec-border{border-bottom:1px solid var(--bd-footer);transition:border-color .35s;}
+    .gallery-tag{
+      font-size:.75rem;
+      color:var(--tx-light);
+      background:var(--bg-tag);
+      padding:4px 10px;
+      border-radius:9999px;
+      white-space:nowrap;
+      transition:background .35s,color .35s;
+    }
+    .sec-icon{color:var(--accent-color,#D63384);flex-shrink:0;}
+
+    /* التواصل الاجتماعي */
+    .social-wrap{
+      background:var(--bg-social);
+      border-radius:60px;
+      padding:.6rem 1rem;
+      display:inline-flex;gap:1rem;
+      box-shadow:0 6px 14px rgba(0,0,0,.06);
+      border:1px solid var(--bd-social);
+      flex-wrap:wrap;
+      justify-content:center;
+      max-width:100%;
+      transition:background .35s,border-color .35s;
+    }
+    .social-item{transition:all .2s;opacity:.75;display:inline-flex;align-items:center;justify-content:center;}
+    .social-item img{width:clamp(28px,7vw,36px);height:clamp(28px,7vw,36px);transition:.2s;}
+    .social-item:hover{opacity:1;transform:translateY(-3px);}
+    .social-item i{color:var(--tx-sub)!important;}
+    .social-label{color:var(--tx-light);font-size:.75rem;text-align:center;margin-top:.75rem;transition:color .35s;}
+
+    /* فوتر */
+    .footer-pro{
+      background:transparent;
+      border-top:1px solid var(--bd-footer);
+      color:var(--tx-muted);
+      text-align:center;
+      padding:1.2rem 1rem;
+      font-size:clamp(.7rem,2vw,.8rem);
+      margin-top:auto;
+      transition:border-color .35s,color .35s;
+    }
+
+    /* أيقونة التطبيق */
+    .app-icon-store{
+      box-shadow:var(--sh-icon);
+      border-radius:1.5rem;
+      background:var(--bg-card);
+      transition:background .35s,box-shadow .35s;
+    }
+
+    /* اسم التطبيق */
+    h1.app-name{
+      font-weight:800;
+      background:linear-gradient(120deg,var(--accent-color,#D63384),var(--accent-color,#D63384));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-size:clamp(2.0rem);
+      line-height:1.5;
+      word-break:break-word;
+    }
+    h2,h3{font-size:clamp(.95rem,3vw,1.25rem);color:var(--tx-main);transition:color .35s;}
+
+    /* توست */
+    .toast-notify{
+      position:fixed;bottom:30px;left:50%;
+      transform:translateX(-50%) translateY(20px);
+      background:var(--tx-main);color:var(--bg-page);
+      padding:10px 20px;border-radius:60px;
+      font-size:clamp(.78rem,2.5vw,.9rem);
+      font-weight:500;z-index:10000;opacity:0;
+      transition:all .25s ease,background .35s,color .35s;
+      pointer-events:none;
+      box-shadow:0 8px 20px rgba(0,0,0,.3);
+      white-space:nowrap;max-width:90vw;text-align:center;
+    }
+    .toast-notify.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* progress */
+    .progress-wrapper{
+      margin-top:12px;background:var(--bd-footer);
+      border-radius:40px;height:6px;overflow:hidden;
+      width:100%;display:none;transition:background .35s;
+    }
+    .progress-fill{
+      width:0%;height:100%;
+      background:var(--accent-color,#D63384);
+      border-radius:40px;transition:width .3s;
+    }
+
+    /* لايت بوكس */
+    .lightbox-pro{background:rgba(0,0,0,.92);backdrop-filter:blur(12px);}
+    .arrow-pro{
+      position:absolute;top:50%;transform:translateY(-50%);
+      background:rgba(255,255,255,.2);backdrop-filter:blur(8px);
+      color:white;
+      width:clamp(36px,8vw,48px);height:clamp(36px,8vw,48px);
+      border-radius:60px;border:none;
+      display:flex;align-items:center;justify-content:center;
+      font-size:clamp(1rem,3vw,2rem);
+      cursor:pointer;transition:.2s;z-index:10002;
+    }
+    .arrow-pro:hover{background:rgba(255,255,255,.35);}
+    #lightbox-img{max-width:92vw;max-height:80vh;object-fit:contain;border-radius:1rem;}
+
+    /* حاوية */
+    .main-container{
+      width:100%;max-width:48rem;margin:0 auto;
+      padding:clamp(1rem,4vw,2rem) clamp(.75rem,4vw,1.5rem);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شريط العلامة التجارية -->
+  <div class="store-gradient-bg text-white text-center py-3 shadow-sm relative">
+    <div class="flex items-center justify-center px-4 relative" style="min-height:52px;">
+      <span id="brandName" class="brand-bar-name">XERNEL0x58</span>
+      <button id="themeBtn" class="theme-btn" aria-label="تبديل الوضع">
+        <i id="themeIcon" class="fas fa-moon"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-container">
+
+    <!-- بطاقة الهوية -->
+    <div class="premium-card p-4 sm:p-6 md:p-8">
+      <div class="flex flex-row items-center justify-start gap-3 sm:gap-5 flex-wrap">
+        <div class="flex-shrink-0">
+          <img id="appIcon" src="icon.png" alt="App Icon" class="app-icon-store"
+               style="width:clamp(72px,20vw,112px);height:clamp(72px,20vw,112px);" loading="lazy">
+        </div>
+        <div class="flex-1 min-w-0">
+          <h1 id="appName" class="app-name">مدار السعادة - Intimacy</h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- بطاقة الوصف والتحميل -->
+    <div class="premium-card p-4 sm:p-6 mt-4 sm:mt-5">
+      <div class="flex items-start gap-2 mb-2">
+        <i class="fas fa-info-circle sec-icon text-lg sm:text-xl mt-1"></i>
+        <h2 id="aboutTitle" class="sec-title font-bold">نبذة عن التطبيق</h2>
+      </div>
+      <div class="text-right">
+        <p id="description" class="desc-text collapsed"></p>
+        <span id="toggleBtn" class="toggle-btn mt-1 cursor-pointer">
+          <i class="fas fa-chevron-down text-xs"></i>
+          <span id="toggleBtnText">عرض المزيد</span>
+        </span>
+      </div>
+      <div class="dl-area mt-5">
+        <button id="downloadBtn" class="btn-dl w-full flex items-center justify-center gap-2 sm:gap-3 text-white font-bold py-3 sm:py-3.5 rounded-xl transition shadow-md">
+
+          
+          <span id="downloadBtnText">تحميل التطبيق</span>
+          
+        </button>
+        <div id="progressWrapper" class="progress-wrapper">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- معرض الصور -->
+    <div class="mt-6 sm:mt-8">
+      <div class="sec-border flex justify-between items-center mb-3 sm:mb-4 pb-2">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-mobile-alt sec-icon text-lg sm:text-xl"></i>
+          <h3 id="galleryTitle" class="sec-title font-bold">معاينة التطبيق</h3>
+        </div>
+        <span class="gallery-tag"><i class="fas fa-arrows-alt-h"></i> اسحب للمزيد</span>
+      </div>
+      <div id="screenshots-container" class="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-4"
+           style="scroll-snap-type:x mandatory;"></div>
+    </div>
+
+    <!-- التواصل الاجتماعي -->
+    <div class="flex justify-center mt-8 sm:mt-10 px-2">
+      <div id="socialLinksContainer" class="social-wrap"></div>
+    </div>
+    <div id="socialSectionTitle" class="social-label">
+      <i class="fas fa-globe"></i> تابعنا على منصات التواصل
+    </div>
+
+  </div>
+
+  <!-- لايت بوكس -->
+  <div id="lightbox" class="fixed inset-0 lightbox-pro hidden items-center justify-center z-[9999]"
+       onclick="closeLightbox()">
+    <span class="absolute top-4 right-4 sm:top-5 sm:right-6 text-white text-2xl sm:text-3xl cursor-pointer z-[10001]
+                 hover:text-cyan-300 w-10 h-10 flex items-center justify-center rounded-full bg-white/10"
+          onclick="closeLightbox()">&times;</span>
+    <button class="arrow-pro" style="right:12px;" onclick="event.stopPropagation();navigateImage(-1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+    <img id="lightbox-img" src="" alt="لقطة شاشة مكبرة" class="shadow-2xl border-2 border-white/30"
+         onclick="event.stopPropagation()">
+    <button class="arrow-pro" style="left:12px;" onclick="event.stopPropagation();navigateImage(1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+  </div>
+
+  <!-- توست -->
+  <div id="toastMsg" class="toast-notify">
+    <i class="fas fa-check-circle ml-2"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <footer class="footer-pro">
+    <div class="max-w-md mx-auto px-4">
+      <i class="fas fa-crown text-amber-400"></i>
+      <span id="footerCopyright" class="font-semibold">All Rights Reserved - @XERNEL0x58</span>
+    </div>
+  </footer>
+
+  <script>
+    /* ── إعدادات ── */
+    const DEFAULT_CONFIG = {
+      accentColor:"#D63384", brandName:"XERNEL0x58",
+      appName:"مدار السعادة - Intimacy",
+      appDescription:"تطبيق تفاعلي يهدف إلى إضافة عنصر المفاجأة والتجديد للحياة الزوجية، من خلال أدوات عشوائية محترمة. يحتوي على 'عجلة حظ' (SPIN) لاختيار أوضاع أو أنشطة متنوعة، و'وضع التحدي' الذي يسمح للزوجين باختيار وضعية معينة، و'ليلة رومانسية' تقدم 5 خيارات عشوائية مع مؤقت زمني لكل منها. كما يشمل 'وضع البطاقات' حيث يقوم أحد الشريكين باختيار بطاقة أو كشفها، وإعدادات متقدمة مثل 'وضع عدم التكرار' لتجنب تكرار نفس الخيارات، مع خيارات للصوت والاهتزاز الخفيف. التطبيق مصمم خصيصًا للمتزوجين، مع التركيز على الاحترام والخصوصية.",
+      aboutTitle:"نبذة عن التطبيق", galleryTitle:"معاينة التطبيق",
+      socialSectionTitle:"تابعنا على منصات التواصل",
+      copyright:"All Rights Reserved - @XERNEL0x58",
+      downloadButtonText:"تحميل التطبيق",
+      toggleMoreText:"عرض المزيد", toggleLessText:"عرض أقل",
+      toastDownloadStart:"جاري التحميل...",
+      toastDownloadSuccess:"✓ بدء تحميل التطبيق بنجاح! سيظهر الملف قريباً",
+      downloadUrl:"https://github.com/XERNEL0x58/IntimacyWheel/releases/download/Intimacy.2.0/Intimacy.2.0.apk", /* ── رابط التحميل ── */
+      screenshotsFolder:"ScreenShots/", screenshotCount:10, iconPath:"icon.png",
+      
+      socialMedia:{
+        facebook:"https://facebook.com/", 
+        twitter:"https://twitter.com/",
+        instagram:"https://instagram.com/", 
+        telegram:"https://telegram.org/",
+        github:"https://github.com/"
+      }
+    };
+
+    let downloadUrl=DEFAULT_CONFIG.downloadUrl, screenshotCount=DEFAULT_CONFIG.screenshotCount;
+    let screenshotsFolder=DEFAULT_CONFIG.screenshotsFolder;
+    let currentImageIndex=0, screenshots=[], isDownloading=false;
+
+    document.documentElement.style.setProperty('--accent-color', DEFAULT_CONFIG.accentColor);
+    document.documentElement.style.setProperty('--accent-color-dark', DEFAULT_CONFIG.accentColor);
+
+    /* ── الوضع الليلي/النهاري ── */
+    function syncThemeIcon(){
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    syncThemeIcon();
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('siteTheme', next);
+      syncThemeIcon();
+    });
+
+    /* ── نصوص الصفحة ── */
+    document.title = `${DEFAULT_CONFIG.appName} | التطبيق القانوني المتكامل`;
+    document.getElementById('brandName').innerText       = DEFAULT_CONFIG.brandName;
+    document.getElementById('appName').innerText         = DEFAULT_CONFIG.appName;
+    document.getElementById('description').innerText     = DEFAULT_CONFIG.appDescription;
+    document.getElementById('aboutTitle').innerText      = DEFAULT_CONFIG.aboutTitle;
+    document.getElementById('galleryTitle').innerText    = DEFAULT_CONFIG.galleryTitle;
+    document.getElementById('socialSectionTitle').innerHTML = `<i class="fas fa-globe"></i> ${DEFAULT_CONFIG.socialSectionTitle}`;
+    document.getElementById('footerCopyright').innerText = DEFAULT_CONFIG.copyright;
+    document.getElementById('downloadBtnText').innerText = DEFAULT_CONFIG.downloadButtonText;
+
+    const ts = document.getElementById('toggleBtnText');
+    if(ts) ts.innerText = DEFAULT_CONFIG.toggleMoreText;
+    window.toggleMoreText = DEFAULT_CONFIG.toggleMoreText;
+    window.toggleLessText = DEFAULT_CONFIG.toggleLessText;
+    window.toastDownloadStartMsg  = DEFAULT_CONFIG.toastDownloadStart;
+    window.toastDownloadSuccessMsg = DEFAULT_CONFIG.toastDownloadSuccess;
+    document.getElementById('appIcon').src = DEFAULT_CONFIG.iconPath;
+
+    /* ── روابط التواصل ── */
+    function buildSocialLinks(items){
+      const c = document.getElementById('socialLinksContainer');
+      if(!c) return; c.innerHTML='';
+      const def = {facebook:"https://facebook.com/",twitter:"https://twitter.com/",instagram:"https://instagram.com/",telegram:"https://telegram.org/",github:"https://github.com/",privacyPolicyLink:"PrivacyPolicy.html"};
+      let obj = (items&&typeof items==='object') ? {...items} : {...def};
+      obj.privacyPolicyLink = "PrivacyPolicy.html";
+      const map={facebook:{file:'facebook.png',alt:'Facebook',ic:'fab fa-facebook'},twitter:{file:'twitter.png',alt:'Twitter',ic:'fab fa-twitter'},instagram:{file:'instagram.png',alt:'Instagram',ic:'fab fa-instagram'},telegram:{file:'telegram.png',alt:'Telegram',ic:'fab fa-telegram'},github:{file:'github.png',alt:'GitHub',ic:'fab fa-github'},privacyPolicyLink:{file:'PrivacyPolicy.png',alt:'سياسة الخصوصية',ic:'fas fa-lock'}};
+      let has=false;
+      for(const[k,u] of Object.entries(obj)){
+        const priv=k==='privacyPolicyLink';
+        if(!priv&&(!u||u==='#'||u==='')) continue;
+        has=true;
+        const info=map[k]||{file:'default.png',alt:k,ic:'fas fa-link'};
+        const a=document.createElement('a');
+        a.href=priv?'PrivacyPolicy.html':u; a.className='social-item';
+        if(!priv) a.target='_blank';
+        a.setAttribute('aria-label',info.alt);
+        const img=document.createElement('img');
+        img.src=`SocialMedia/${info.file}`; img.alt=info.alt; img.loading='lazy';
+        img.onerror=function(){this.onerror=null;const f=document.createElement('i');f.className=`${info.ic} text-3xl`;f.style.color='var(--tx-sub)';this.parentNode.replaceChild(f,this);};
+        a.appendChild(img); c.appendChild(a);
+      }
+      if(!has){const p=document.createElement('div');p.style.color='var(--tx-light)';p.style.fontSize='.875rem';p.innerText='لا توجد روابط تواصل اجتماعي حالياً';c.appendChild(p);}
+    }
+    buildSocialLinks(DEFAULT_CONFIG.socialMedia);
+
+    /* ── التحميل ── */
+    let dlCount = parseInt(localStorage.getItem('almaktab_downloads')||'102');
+    const dlBtn=document.getElementById('downloadBtn'), dlText=document.getElementById('downloadBtnText');
+    const progWrap=document.getElementById('progressWrapper'), progFill=document.getElementById('progressFill');
+
+    function showToast(msg){
+      const t=document.getElementById('toastMsg');
+      document.getElementById('toastText').innerText=msg;
+      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
+    }
+    function simulateDownload(){
+      if(isDownloading)return; isDownloading=true; dlBtn.disabled=true;
+      dlText.innerHTML=`<i class="fas fa-spinner fa-pulse"></i> ${window.toastDownloadStartMsg}`;
+      progWrap.style.display='block'; let p=0;
+      const iv=setInterval(()=>{
+        p+=Math.floor(Math.random()*15)+5;
+        if(p>=100){clearInterval(iv);progFill.style.width='100%';triggerDl();}
+        else progFill.style.width=p+'%';
+      },150);
+    }
+    function triggerDl(){
+      dlCount++; localStorage.setItem('almaktab_downloads',dlCount);
+      const l=document.createElement('a'); l.href=downloadUrl; l.download='almaktab.apk';
+      document.body.appendChild(l); l.click(); document.body.removeChild(l);
+      showToast(window.toastDownloadSuccessMsg);
+      setTimeout(()=>{isDownloading=false;dlBtn.disabled=false;dlText.innerHTML=`<i class="fab fa-android text-xl"></i> ${DEFAULT_CONFIG.downloadButtonText}`;progWrap.style.display='none';progFill.style.width='0%';},1500);
+    }
+    dlBtn.addEventListener('click',e=>{e.preventDefault();if(!isDownloading)simulateDownload();});
+
+    /* ── لقطات الشاشة ── */
+    function loadScreenshots(){
+      const c=document.getElementById('screenshots-container');
+      if(!c)return; c.innerHTML='';
+      const exts=['png','jpg','jpeg'];
+      for(let i=1;i<=screenshotCount;i++) tryImg(i,exts,0,c);
+    }
+    function tryImg(n,exts,ei,c){
+      if(ei>=exts.length)return;
+      const img=new Image(), path=`${screenshotsFolder}screenshot${n}.${exts[ei]}`;
+      img.onload=()=>{
+        const idx=screenshots.length; screenshots.push(path);
+        const el=document.createElement('img');
+        el.src=path; el.loading='lazy'; el.dataset.index=idx;
+        el.className='screenshot-store'; el.style.scrollSnapAlign='start';
+        el.alt=`لقطة تطبيق ${n}`;
+        el.onclick=()=>openLightbox(parseInt(el.dataset.index));
+        c.appendChild(el);
+      };
+      img.onerror=()=>tryImg(n,exts,ei+1,c);
+      img.src=path;
+    }
+
+    /* ── لايت بوكس ── */
+    function openLightbox(i){
+      if(!screenshots.length)return;
+      currentImageIndex=Math.max(0,Math.min(i,screenshots.length-1));
+      const lb=document.getElementById('lightbox');
+      document.getElementById('lightbox-img').src=screenshots[currentImageIndex];
+      lb.classList.remove('hidden'); lb.style.display='flex';
+      document.body.style.overflow='hidden';
+    }
+    function closeLightbox(){
+      const lb=document.getElementById('lightbox');
+      lb.classList.add('hidden'); lb.style.display='none';
+      document.body.style.overflow='';
+    }
+    function navigateImage(d){
+      if(!screenshots.length)return;
+      const ni=Math.max(0,Math.min(currentImageIndex+d,screenshots.length-1));
+      if(ni===currentImageIndex)return;
+      currentImageIndex=ni;
+      document.getElementById('lightbox-img').src=screenshots[currentImageIndex];
+    }
+    document.addEventListener('keydown',e=>{
+      const lb=document.getElementById('lightbox');
+      if(lb&&lb.style.display==='flex'){
+        if(e.key==='ArrowLeft')navigateImage(1);
+        if(e.key==='ArrowRight')navigateImage(-1);
+        if(e.key==='Escape')closeLightbox();
+      }
+    });
+
+    /* ── توسيع الوصف ── */
+    function toggleDescription(){
+      const d=document.getElementById('description');
+      const s=document.getElementById('toggleBtnText');
+      const ic=document.querySelector('#toggleBtn i');
+      if(d.classList.contains('collapsed')){
+        d.classList.replace('collapsed','expanded');
+        s.innerText=window.toggleLessText;
+        if(ic){ic.classList.replace('fa-chevron-down','fa-chevron-up');}
+      } else {
+        d.classList.replace('expanded','collapsed');
+        s.innerText=window.toggleMoreText;
+        if(ic){ic.classList.replace('fa-chevron-up','fa-chevron-down');}
+      }
+    }
+    window.toggleDescription=toggleDescription;
+    document.getElementById('toggleBtn')?.addEventListener('click',toggleDescription);
+
+    window.addEventListener('DOMContentLoaded',()=>{
+      loadScreenshots();
+      setTimeout(()=>{
+        const c=document.getElementById('screenshots-container');
+        if(c&&c.children.length===0)
+          c.innerHTML='<div class="text-center py-8 w-full" style="color:var(--tx-light)"><i class="fas fa-image text-3xl mb-2 block"></i> لا توجد لقطات شاشة متاحة حالياً</div>';
+      },2000);
+    });
+  </script>
+</body>
+</html>
